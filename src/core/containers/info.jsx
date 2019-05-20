@@ -22,10 +22,7 @@ export default class InfoContainer extends React.Component {
 
     return (
       <div>
-        {info && info.count() ? (
-          <Info info={info} url={url} host={host} basePath={basePath} externalDocs={externalDocs}
-                getComponent={getComponent}/>
-        ) : null}
+        HI
       </div>
     )
   }
