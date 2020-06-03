@@ -34,11 +34,8 @@ jobs:
         
     - name: Get the PR details
       run: |
-        curl --request PATCH \
-        --url https://api.github.com/repos/${{ github.repository }}/issues \
+        curl --request GET \
+        --url https://api.github.com/repos/${{ github.repository }}/pulls \
         --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-        --header 'content-type: application/json' \
-        --data '{
-          "title": "Automated issue for commit: ${{ github.sha }}"
-          }'
+        --header 'content-type: application/json' 
       
