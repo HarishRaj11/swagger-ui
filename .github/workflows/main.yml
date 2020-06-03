@@ -33,4 +33,20 @@ jobs:
         --data '{
           "title": "Hey man it really worked"
           }'
+          
+        curl -X POST \
+            'https://freshworks.freshrelease.com/API/issues' \
+            -H 'accept: application/json' \
+            -H 'authorization: Token token=eqnFHdlctbfRUG-kVB9jiA' \
+            -H 'content-type: application/json' \
+            -data '{
+              "title": "Test ticket",
+            "name": "Test ticket",
+            "description": "Test ticket",
+            "issue_type_id": 45978,
+            "epic_id": 217897,
+            "status_id": 18,
+            "priority_id": 3,
+            "reporter_id": 2748
+            }'
       
