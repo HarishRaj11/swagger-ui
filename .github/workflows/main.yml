@@ -24,7 +24,7 @@ jobs:
     - name: Get the PR details
       run: |
         echo ::set-env name=PULL_NUMBER::$(echo "$GITHUB_REF" | awk -F / '{print $3}')
-        echo PULL_NUMBER
+        echo $PULL_NUMBER
         curl --request GET \
         --url https://api.github.com/repos/${{ github.repository }}/pulls \
         --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
