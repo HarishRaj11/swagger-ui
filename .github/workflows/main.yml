@@ -23,7 +23,7 @@ jobs:
       
     - name: Get the PR details
       run: |
-        
+        echo ${GITHUB_REF#refs/heads/}
         curl --request GET \
         --url https://api.github.com/repos/${{ github.repository }}/pulls \
         --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
