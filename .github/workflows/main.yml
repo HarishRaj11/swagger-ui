@@ -34,12 +34,12 @@ jobs:
           "title": "Hey man it really worked"
           }'
           
-        curl -X POST \
-            'https://freshworks.freshrelease.com/API/issues' \
-            -H 'accept: application/json' \
-            -H 'authorization: Token token=eqnFHdlctbfRUG-kVB9jiA' \
-            -H 'content-type: application/json' \
-            -data '{
+        curl --request POST \
+        --url https://freshworks.freshrelease.com/API/issues \
+        --header 'accept: application/json' \
+        --header 'authorization: Token token=eqnFHdlctbfRUG-kVB9jiA' \
+        --header 'content-type: application/json' \
+        --data '{
               "title": "Test ticket",
             "name": "Test ticket",
             "description": "Test ticket",
