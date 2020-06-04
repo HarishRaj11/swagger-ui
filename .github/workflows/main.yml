@@ -5,8 +5,6 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -14,39 +12,23 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
+    
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
       
     - name: Get the PR details
       run: |
         PULL_NUMBER=$(echo "$GITHUB_REF"| awk -F / '{print $3}' )
         echo "Changing the title for the PR number: "
         echo $PULL_NUMBER
-        curl --request PATCH \
-        --url https://api.github.com/repos/${{ github.repository }}/pulls/$PULL_NUMBER \
-        --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-        --header 'content-type: application/json' \
-        --data '{
-          "title": "Hey man it really worked"
-          }'
-          
-        curl --request POST \
-        --url https://freshworks.freshrelease.com/API/issues \
-        --header 'accept: application/json' \
-        --header 'authorization: Token token=eqnFHdlctbfRUG-kVB9jiA' \
-        --header 'content-type: application/json' \
-        --data '{
-              "title": "Test ticket",
-            "name": "Test ticket",
-            "description": "Test ticket",
-            "issue_type_id": 45978,
-            "epic_id": 217897,
-            "status_id": 18,
-            "priority_id": 3,
-            "reporter_id": 2748
-            }'
+        ls
       
