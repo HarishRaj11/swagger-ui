@@ -28,6 +28,7 @@ jobs:
       run: |
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
         echo $output
+        echo ::set-output name=json_var::$output
     - name: use output
       run: |
         echo $json_var
