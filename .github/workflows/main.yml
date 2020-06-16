@@ -11,6 +11,6 @@ jobs:
     - uses: tzkhan/pr-update-action@v1.1.1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        branch-regex: '*'
+        branch-regex: '[\s\S]*'
         title-template: '[%API%]'
         body-template: '[API- %branch%](https://url/to/browse/ticket/%branch%)'
