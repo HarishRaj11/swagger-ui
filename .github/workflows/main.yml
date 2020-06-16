@@ -12,5 +12,17 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         branch-regex: '[\s\S]*'
-        title-template: '[%API%]'
-        body-template: '[API- %branch%](https://url/to/browse/ticket/%branch%)'
+        title-template: '[API]'
+        body-template: '[API-${{ steps.get-request.outputs.output }}](https://url/to/browse/ticket/%branch%)'
+    - uses: satak/webrequest-action@master
+      id: freshrelease-ticket
+      with:
+        url: https://freshworks.freshrelease.com/API/issues
+        method: POST
+        payload: '{"title": "Test ticket1", "name": "Test ticket1", "description": "Test ticket", "issue_type_id": 45978, "epic_id": 217897, "status_id": 18, "priority_id": 3, "reporter_id": 2748}'
+        headers: '{"Authentication": "Token token=eqnFHdlctbfRUG-kVB9jiA"}'
+    - name: get-request output
+      shell: pwsh
+      run: |
+        $output = '${{ steps.get-request.outputs.output }}' | ConvertFrom-Json
+        echo $output
