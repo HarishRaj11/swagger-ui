@@ -10,12 +10,6 @@ jobs:
   pr_update_text:
     runs-on: ubuntu-latest
     steps:
-    - uses: tzkhan/pr-update-action@v1.1.1
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        branch-regex: '[\s\S]*'
-        title-template: '[API]'
-        body-template: '[API-${{ steps.get-request.outputs.output }}](https://url/to/browse/ticket/%branch%)'
     - uses: satak/webrequest-action@master
       id: freshrelease-ticket
       with:
@@ -32,3 +26,9 @@ jobs:
     - name: use output
       run: |
         echo $FRESHRELEASE_TICKET_ID
+    - uses: tzkhan/pr-update-action@v1.1.1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        branch-regex: '[\s\S]*'
+        title-template: '[${{ env.FRESHRELEASE_TICKET_ID }}]'
+        body-template: 'Freshrelease Ticket: [${{ env.FRESHRELEASE_TICKET_ID }}](https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}'
