@@ -10,25 +10,12 @@ jobs:
   pr_update_text:
     runs-on: ubuntu-latest
     steps:
-    - uses: satak/webrequest-action@master
-      id: freshrelease-ticket
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
       with:
-        url: https://freshworks.freshrelease.com/API/issues/API-116
-        method: GET
-        headers: '{"authorization": "Token token=eqnFHdlctbfRUG-kVB9jiA", "Content-Type": "application/json", "Accept": "application/json"}'
-    - name: get-request output
-      id: set
-      shell: pwsh
-      run: |
-        $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
-        $key = $output.data.issue.key
-        echo "::set-env name=FRESHRELEASE_TICKET_ID::$key"
-    - name: use output
-      run: |
-        echo $FRESHRELEASE_TICKET_ID
-    - uses: tzkhan/pr-update-action@v1.1.1
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        branch-regex: '[\s\S]*'
-        title-template: '[${{ env.FRESHRELEASE_TICKET_ID }}]'
-        body-template: 'Freshrelease Ticket: [${{ env.FRESHRELEASE_TICKET_ID }}](https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+      # This will echo "Your PR is 7", or be skipped if there is no current PR.
+    - run: echo "Your PR is ${PR}"
+      if: success() && steps.findPr.outputs.number
+      env:
+        PR: ${{ steps.findPr.outputs.pr }}
