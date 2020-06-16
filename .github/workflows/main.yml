@@ -4,6 +4,8 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  FRESHRELEASE_TICKET_ID: 0
 jobs:
   pr_update_text:
     runs-on: ubuntu-latest
@@ -24,4 +26,6 @@ jobs:
       shell: pwsh
       run: |
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
-        echo $output
+        echo ::set-env name=FRESHRELEASE_TICKET_ID::$output.issues
+    - name: test
+      run: echo $FRESHRELEASE_TICKET_ID
