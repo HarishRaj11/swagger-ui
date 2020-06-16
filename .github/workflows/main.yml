@@ -38,5 +38,5 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         branch-regex: '[\s\S]*'
-        title-template: '[API-\d+]'
+        title-template: '[${{ env.FRESHRELEASE_TICKET_ID }}]'
         body-template: 'Freshrelease Ticket: [${{ env.FRESHRELEASE_TICKET_ID }}](https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }})'
