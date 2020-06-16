@@ -22,4 +22,4 @@ jobs:
           pull_number: "${{ env.PULL_REQUEST_NUMBER }}"
       - name: test
         run: |
-          echo ${{ steps.pull_request_data.title }}
+          echo ${{ steps.pull_request_data.outputs.title }}
