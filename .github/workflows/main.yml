@@ -20,7 +20,7 @@ jobs:
         url: https://freshworks.freshrelease.com/API/issues
         method: POST
         payload: '{"title": "Test ticket1", "name": "Test ticket1", "description": "Test ticket", "issue_type_id": 45978, "epic_id": 217897, "status_id": 18, "priority_id": 3, "reporter_id": 2748}'
-        headers: '{"Authentication": "Token token=eqnFHdlctbfRUG-kVB9jiA", "Content-Type": "application/json", "Accept": "application/json"}'
+        headers: '{"authorization": "Token token=eqnFHdlctbfRUG-kVB9jiA", "Content-Type": "application/json", "Accept": "application/json"}'
     - name: get-request output
       shell: pwsh
       run: |
