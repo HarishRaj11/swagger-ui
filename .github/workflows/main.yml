@@ -27,7 +27,7 @@ jobs:
       shell: pwsh
       run: |
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
-        echo $output | jq '.data.issue'
+        echo $output.data.issue
         echo ::set-output name=json_var::'${{ steps.freshrelease-ticket.outputs.output }}'
     - name: use output
       run: |
