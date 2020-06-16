@@ -26,6 +26,6 @@ jobs:
       shell: pwsh
       run: |
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
-        echo ::set-env name=FRESHRELEASE_TICKET_ID::$output.issues
+        echo ::set-env name=FRESHRELEASE_TICKET_ID::$output.data
     - name: test
       run: echo $FRESHRELEASE_TICKET_ID
