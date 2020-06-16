@@ -30,6 +30,6 @@ jobs:
         echo ::set-output name=json_var::steps.freshrelease-ticket.outputs.output
     - name: use output
       run: |
-        echo $json_var | jq '.[].name'
+        echo $json_var
       env:
         json_var: ${{ steps.set.outputs.json_var}}
