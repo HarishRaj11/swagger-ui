@@ -11,15 +11,32 @@ jobs:
   pr_update_text:
     runs-on: ubuntu-latest
     steps:
-      - run: |
+    - run: |
           PULL_NUMBER=$(echo "$GITHUB_REF"| awk -F / '{print $3}' )
           echo "::set-env name=PULL_REQUEST_NUMBER::$PULL_NUMBER"
-      - name: Get Pull Request Data
-        id: pull_request_data
-        uses: simpleactions/get-pull-request@v1.0.0
-        with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-          pull_number: "${{ env.PULL_REQUEST_NUMBER }}"
-      - name: test
-        run: |
-          echo ${{ steps.pull_request_data.outputs.title }}
+    - name: Get Pull Request Data
+      id: pull_request_data
+      uses: simpleactions/get-pull-request@v1.0.0
+      with:
+        github_token: "${{ secrets.GITHUB_TOKEN }}"
+        pull_number: "${{ env.PULL_REQUEST_NUMBER }}"
+    - uses: satak/webrequest-action@master
+      id: freshrelease-ticket
+      with:
+        url: https://freshworks.freshrelease.com/API/issues
+        method: POST
+        payload: '{"title": "${{ steps.pull_request_data.outputs.title }}", "name": "${{ steps.pull_request_data.outputs.title }}", "description": "${{ steps.pull_request_data.outputs.description }}", "issue_type_id": 45978, "epic_id": 217897, "status_id": 18, "priority_id": 3, "reporter_id": 2748}'
+        headers: '{"authorization": "Token token=eqnFHdlctbfRUG-kVB9jiA", "Content-Type": "application/json", "Accept": "application/json"}'
+    - name: get-request output
+      id: set
+      shell: pwsh
+      run: |
+        $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
+        $key = $output.data.issue.key
+        echo "::set-env name=FRESHRELEASE_TICKET_ID::$key"
+    - uses: tzkhan/pr-update-action@v1.1.1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        branch-regex: '[\s\S]*'
+        title-template: '[API-/[0-9]+/]'
+        body-template: 'Freshrelease Ticket: [${{ env.FRESHRELEASE_TICKET_ID }}](https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}'
