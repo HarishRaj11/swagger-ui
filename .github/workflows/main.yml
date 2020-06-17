@@ -23,10 +23,10 @@ jobs:
         pull_number: "${{ env.PULL_REQUEST_NUMBER }}"
     - name: get-request output
       id: set
-      shell: pwsh
+      shell: bash
       run: |
-        $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
-        $key = $output.data.issue.key
+        $key=$(sed 's/.*\[API-\(.*\)\].*/\1/' <<< "${{ steps.pull_request_data.title }}")
+        echo $key
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$key"
     - uses: satak/webrequest-action@master
       id: freshrelease-ticket
