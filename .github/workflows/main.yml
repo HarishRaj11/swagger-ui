@@ -24,7 +24,7 @@ jobs:
       id: set
       shell: bash
       run: |
-        $key=$(sed 's/.*\[API-\(.*\)\].*/\1/' <<< "${{ steps.pull_request_data.title }}")
+        key=$(sed 's/.*\[API-\(.*\)\].*/\1/' <<< "${{ steps.pull_request_data.outputs.title }}")
         echo $key
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$key"
     - uses: satak/webrequest-action@master
