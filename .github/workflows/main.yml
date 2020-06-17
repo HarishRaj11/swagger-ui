@@ -6,7 +6,9 @@ on:
 
 env:
   FRESHRELEASE_TICKET_ID: 0
+  FRESHRELEASE_TICKET_KEY: 0
   PULL_REQUEST_NUMBER: 0
+  PULL_REQUEST_REVIEWER: ""
 jobs:
   pr_update_text:
     runs-on: ubuntu-latest
@@ -26,12 +28,25 @@ jobs:
       run: |
         key=$(sed 's/.*\[API-\(.*\)\].*/\1/' <<< "${{ steps.pull_request_data.outputs.title }}")
         echo $key
-        echo $GITHUB_ACTOR
-        echo "::set-env name=FRESHRELEASE_TICKET_ID::$key"
-    - uses: satak/webrequest-action@master
+        echo "::set-env name=PULL_REQUEST_REVIEWER::$GITHUB_ACTOR"
+        echo "::set-env name=FRESHRELEASE_TICKET_KEY::$key"
+    - name: get-freshrelease-ticket-id
+      uses: satak/webrequest-action@master
       id: freshrelease-ticket
       with:
-        url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_ID }}/comments
+        url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
+        method: GET
+        headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
+    - name: extract Freshrelase ticket ID
+      shell: pwsh
+      run: |
+        $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
+        $id = $output.data.issue.id
+        echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
+    - uses: satak/webrequest-action@master
+      id: freshrelease
+      with:
+        url: https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}/comments
         method: POST
-        payload: '{ "content": "${{ github.GITHUB_ACTOR }} commented on your Pull Request...." }'
+        payload: '{ "content": "${{ env.PULL_REQUEST_REVIEWER }} commented on your Pull Request...." }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
