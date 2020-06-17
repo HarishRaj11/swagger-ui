@@ -32,5 +32,5 @@ jobs:
       with:
         url: https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}/comments
         method: POST
-        payload: '{ "content": "${{ GITHUB_ACTOR }} commented on your Pull Request...." }'
+        payload: '{ "content": "${{ github.GITHUB_ACTOR }} commented on your Pull Request...." }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
