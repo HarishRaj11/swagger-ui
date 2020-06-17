@@ -26,7 +26,7 @@ jobs:
       with:
         url: https://freshworks.freshrelease.com/API/issues
         method: POST
-        payload: '{"title": "${{ steps.pull_request_data.outputs.title }}", "name": "${{ steps.pull_request_data.outputs.title }}", "description": "${{ steps.pull_request_data.outputs.description }}", "issue_type_id": 45978, "epic_id": 217897, "status_id": 18, "priority_id": 3, "reporter_id": 2748}'
+        payload: '{"title": "${{ steps.pull_request_data.outputs.title }}", "name": "${{ steps.pull_request_data.outputs.title }}", "description": "Refer to the Pr for details : https://github.com/freshdesk/api-tools/pull/${{ env.PULL_REQUEST_NUMBER }}", "issue_type_id": 45978, "epic_id": 217897, "status_id": 18, "priority_id": 3, "reporter_id": 2748}'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
     - name: get-request output
       id: set
