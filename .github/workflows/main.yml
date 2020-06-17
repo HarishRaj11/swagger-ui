@@ -26,11 +26,12 @@ jobs:
       run: |
         key=$(sed 's/.*\[API-\(.*\)\].*/\1/' <<< "${{ steps.pull_request_data.outputs.title }}")
         echo $key
+        echo $GITHUB_ACTOR
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$key"
     - uses: satak/webrequest-action@master
       id: freshrelease-ticket
       with:
-        url: https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}/comments
+        url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_ID }}/comments
         method: POST
         payload: '{ "content": "${{ github.GITHUB_ACTOR }} commented on your Pull Request...." }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
