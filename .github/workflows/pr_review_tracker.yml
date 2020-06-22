@@ -53,3 +53,11 @@ jobs:
         method: POST
         payload: '{ "content": "${{ env.PULL_REQUEST_REVIEWER }} commented on your Pull Request" }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
+    - name: Change the status of the Freshrelease ticket to in-progress
+      id: status_updater
+      uses: satak/webrequest-action@master
+      with:
+        url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
+        method: PUT
+        payload: '{ "status_id": 19 }'
+        headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
