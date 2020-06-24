@@ -57,7 +57,7 @@ jobs:
         $members = '${{ steps.review_team_members.outputs.output }}' | ConvertFrom-Json
         $members_list = $members.data | Select login
         echo $members_list
-        echo "::set-output name=api_reviewers::$(members_list)"
+        echo "::set-output name=api_reviewers::$members_list"
     - name: Test
       run: |
         echo ${{ steps.api_reviewers.outputs.api_reviewers }}
