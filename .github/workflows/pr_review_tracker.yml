@@ -44,9 +44,9 @@ jobs:
       uses: satak/webrequest-action@master
       id: review_team_members
       with:
-        url: https://api.github.com/organizations/337122/team/3818517/members
+        url: https://api.github.com/organizations/337122/team/3818517/members?access_token=${{ secrets.GITHUB_TOKEN }}
         method: GET
-        headers: '{"authorization": "Token token=${{ secrets.GITHUB_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
+        headers: '{"Content-Type": "application/json", "Accept": "application/json"}'
     - name: extract Freshrelase ticket ID
       shell: pwsh
       run: |
