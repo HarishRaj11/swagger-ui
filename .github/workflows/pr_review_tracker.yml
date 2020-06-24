@@ -2,7 +2,7 @@ name: "Update Pull Request"
 on:
   # event trigger: only when a review is submiteed on a PR
   pull_request_review:
-    type: [ submitted ]
+    type: [ submitted, commented ]
 
 env:
   FRESHRELEASE_TICKET_ID: 0
@@ -39,12 +39,22 @@ jobs:
         url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
         method: GET
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
+    - name: get-review-team-members
+      # to fetch the freshrelease ticket details (id)
+      uses: satak/webrequest-action@master
+      id: review_team_members
+      with:
+        url: https://api.github.com/organizations/337122/team/3818517/members
+        method: GET
+        headers: '{"authorization": "Token token=${{ secrets.GITHUB_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
     - name: extract Freshrelase ticket ID
       shell: pwsh
       run: |
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
         $id = $output.data.issue.id
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
+        $members = '${{ steps.review_team_members.outputs.output }}' | CovertFrom-Json
+        echo $members
     - name: Add comment in Freshrelease
       uses: satak/webrequest-action@master
       id: freshrelease
@@ -59,5 +69,5 @@ jobs:
       with:
         url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
         method: PUT
-        payload: '{ "status_id": 19 }'
+        payload: '{ "status_id": 18 }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
