@@ -57,6 +57,7 @@ jobs:
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
         $members = '${{ steps.review_team_members.outputs.output }}' | ConvertFrom-Json
         $members_list = $members.data | Select login
+        echo $members_list[1]
         $is_member = "${{ env.PULL_REQUEST_REVIEWER }}" -in $members_list
         echo $is_member
     - name: Add comment in Freshrelease
