@@ -78,5 +78,5 @@ jobs:
       with:
         url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
         method: PUT
-        payload: '{ "status_id": 18 }'
+        payload: '{ "status_id": 19 }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
