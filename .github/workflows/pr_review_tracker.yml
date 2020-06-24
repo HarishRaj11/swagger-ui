@@ -53,8 +53,12 @@ jobs:
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
         $id = $output.data.issue.id
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
+        $members_array = []
         $members = '${{ steps.review_team_members.outputs.output }}' | ConvertFrom-Json
-        echo $members.data[0]
+        for ($i = 0; $i -lt $members.data.Count ; $i++) {
+          $members_array[$i] = $members.data[$i].login
+        }
+        echo $members_array
     - name: Add comment in Freshrelease
       uses: satak/webrequest-action@master
       id: freshrelease
