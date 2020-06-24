@@ -59,8 +59,10 @@ jobs:
         echo $members_list
         echo "::set-output name=api_reviewers::${members_list[@]}"
     - name: Test
+      shell: pwsh
       run: |
-        echo ${{ steps.api_reviewers.outputs.api_reviewers }}
+        $reviewers = ${{ steps.api_reviewers.outputs.api_reviewers }}
+        echo $reviewers
     - name: Add comment in Freshrelease
       uses: satak/webrequest-action@master
       id: freshrelease
