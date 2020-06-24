@@ -2,14 +2,13 @@ name: "Update Pull Request"
 on:
   # event trigger: only when a review is submiteed on a PR
   pull_request_review:
-    type: [ submitted, commented ]
+    type: [ submitted ]
 
 env:
   FRESHRELEASE_TICKET_ID: 0
   FRESHRELEASE_TICKET_KEY: 0
   PULL_REQUEST_NUMBER: 0
   PULL_REQUEST_REVIEWER: ""
-  IS_REVIEW_DONE_BY_API_TEAM: false
 
 jobs:
   pr_review_tracker:
@@ -40,32 +39,15 @@ jobs:
         url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
         method: GET
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
-    - name: get-review-team-members
-      # to fetch the freshrelease ticket details (id)
-      uses: satak/webrequest-action@master
-      id: review_team_members
-      with:
-        url: https://api.github.com/organizations/337122/team/3818517/members
-        method: GET
-        headers: '{"Authorization": "token ${{ secrets.ACCESS_TOKEN }}", "Content-Type": "application/json"}'
-    - name: extract Freshrelase ticket ID and check if the reviewer is one from the API review team
+    - name: extract Freshrelase ticket ID
       shell: pwsh
-      id: api_reviewers
       run: |
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
         $id = $output.data.issue.id
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
-        $members = '${{ steps.review_team_members.outputs.output }}' | ConvertFrom-Json
-        $members_list = @()
-        for ($i=0; $i -lt $members.data.Count; $i++) {
-          $members_list += $members.data[$i].login
-        }
-        $is_member = "${{ env.PULL_REQUEST_REVIEWER }}" -in $members_list
-        echo "::set-env name=IS_REVIEW_DONE_BY_API_TEAM::$is_member"
     - name: Add comment in Freshrelease
       uses: satak/webrequest-action@master
       id: freshrelease
-      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM }} == true
       with:
         url: https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}/comments
         method: POST
@@ -74,7 +56,6 @@ jobs:
     - name: Change the status of the Freshrelease ticket to in-progress
       id: status_updater
       uses: satak/webrequest-action@master
-      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM }} == true
       with:
         url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
         method: PUT
