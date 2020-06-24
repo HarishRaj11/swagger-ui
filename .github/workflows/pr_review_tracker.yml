@@ -56,7 +56,10 @@ jobs:
         $id = $output.data.issue.id
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
         $members = '${{ steps.review_team_members.outputs.output }}' | ConvertFrom-Json
-        $members_list = $members.data | Select login
+        $members_list = @()
+        for ($i=0; $i -lt $members.data.Count; $i++) {
+          $members_list += $members.data[$i].login
+        }
         echo $members_list[1]
         $is_member = "${{ env.PULL_REQUEST_REVIEWER }}" -in $members_list
         echo $is_member
