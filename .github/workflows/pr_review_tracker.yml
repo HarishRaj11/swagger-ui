@@ -57,7 +57,7 @@ jobs:
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
         $members = '${{ steps.review_team_members.outputs.output }}' | ConvertFrom-Json
         $members_list = $members.data | Select login
-        $is_member = $members_list -contains '${{ env.PULL_REQUEST_REVIEWER }}'
+        $is_member = "${{ env.PULL_REQUEST_REVIEWER }}" -in $members_list
         echo $is_member
     - name: Add comment in Freshrelease
       uses: satak/webrequest-action@master
