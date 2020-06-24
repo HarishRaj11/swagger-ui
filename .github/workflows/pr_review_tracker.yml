@@ -31,6 +31,7 @@ jobs:
         echo $key
         echo "::set-env name=PULL_REQUEST_REVIEWER::$GITHUB_ACTOR"
         echo "::set-env name=FRESHRELEASE_TICKET_KEY::$key"
+        echo ${{ secrets.GITHUB_TOKEN }}
     - name: get-freshrelease-ticket-id
       # to fetch the freshrelease ticket details (id)
       uses: satak/webrequest-action@master
@@ -46,7 +47,7 @@ jobs:
       with:
         url: https://api.github.com/organizations/337122/team/3818517/members
         method: GET
-        headers: '{"Authorization": "token ${{ secrets.GITHUB_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
+        headers: '{"Authorization": "token ${{ secrets.GITHUB_TOKEN }}", "Content-Type": "application/json"}'
     - name: extract Freshrelase ticket ID
       shell: pwsh
       run: |
