@@ -9,6 +9,7 @@ env:
   FRESHRELEASE_TICKET_KEY: 0
   PULL_REQUEST_NUMBER: 0
   PULL_REQUEST_REVIEWER: ""
+  IS_REVIEW_DONE_BY_API_TEAM: false
 
 jobs:
   pr_review_tracker:
@@ -56,13 +57,7 @@ jobs:
         echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
         $members = '${{ steps.review_team_members.outputs.output }}' | ConvertFrom-Json
         $members_list = $members.data | Select login
-        echo $members_list
-        echo "::set-output name=api_reviewers::${members_list[@]}"
-    - name: Test
-      shell: pwsh
-      run: |
-        $reviewers = ${{ steps.api_reviewers.outputs.api_reviewers }}
-        echo $reviewers
+        echo $members_list -like ${{ env.PULL_REQUEST_REVIEWER }}
     - name: Add comment in Freshrelease
       uses: satak/webrequest-action@master
       id: freshrelease
