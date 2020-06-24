@@ -46,7 +46,7 @@ jobs:
       with:
         url: https://api.github.com/organizations/337122/team/3818517/members
         method: GET
-        headers: '{"Authorization": "token ${{ secrets.GITHUB_TOKEN }}""Content-Type": "application/json", "Accept": "application/json"}'
+        headers: '{"Authorization": "token ${{ secrets.GITHUB_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
     - name: extract Freshrelase ticket ID
       shell: pwsh
       run: |
