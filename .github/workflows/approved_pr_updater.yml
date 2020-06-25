@@ -16,6 +16,5 @@ jobs:
     steps:
     - name: Get the PR Number and set it in the env variable
       run: |
-          echo $GITHUB_REF
-          PULL_NUMBER=$(echo "$GITHUB_REF"| awk -F / '{print $3}' )
-          echo "::set-env name=PULL_REQUEST_NUMBER::$PULL_NUMBER"
+          echo "::set-env name=PULL_REQUEST_NUMBER::${{ github.event.pull_request.number }}"
+          echo ${{ env.PULL_REQUEST_NUMBER }}
