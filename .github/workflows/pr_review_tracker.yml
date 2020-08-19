@@ -63,7 +63,7 @@ jobs:
         $is_member = "${{ env.PULL_REQUEST_REVIEWER }}" -in $members_list
         echo "::set-env name=IS_REVIEW_DONE_BY_API_TEAM::false"
     - name: Add comment in Freshrelease
-      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM }}
+      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM == 'True' }}
       uses: satak/webrequest-action@master
       id: freshrelease
       with:
@@ -72,7 +72,7 @@ jobs:
         payload: '{ "content": "${{ env.PULL_REQUEST_REVIEWER }} commented on your Pull Request" }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
     - name: Change the status of the Freshrelease ticket to in-progress
-      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM }}
+      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM == 'True' }}
       id: status_updater
       uses: satak/webrequest-action@master
       with:
