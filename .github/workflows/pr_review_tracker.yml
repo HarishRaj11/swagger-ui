@@ -61,7 +61,7 @@ jobs:
           $members_list += $members.data[$i].login
         }
         $is_member = "${{ env.PULL_REQUEST_REVIEWER }}" -in $members_list
-        echo "::set-env name=IS_REVIEW_DONE_BY_API_TEAM::$is_member"
+        echo "::set-env name=IS_REVIEW_DONE_BY_API_TEAM::false"
     - name: Add comment in Freshrelease
       uses: satak/webrequest-action@master
       id: freshrelease
@@ -74,7 +74,7 @@ jobs:
     - name: Change the status of the Freshrelease ticket to in-progress
       id: status_updater
       uses: satak/webrequest-action@master
-      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM }} == true
+      if: ${{ env.IS_REVIEW_DONE_BY_API_TEAM }}
       with:
         url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
         method: PUT
