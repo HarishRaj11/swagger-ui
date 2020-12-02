@@ -1,12 +1,8 @@
-name: "Update Pull Request"
+name: "Close Freshrelease Ticket on PR merge"
 on:
   # event trigger: when the PR is merged
   pull_request:
     types: [ closed ]
-
-env:
-  FRESHRELEASE_TICKET_ID: 0
-  FRESHRELEASE_TICKET_KEY: 0
 
 jobs:
   pr_review_tracker:
@@ -23,32 +19,34 @@ jobs:
 
     - name: extract Pull request data (Pull Request reviewer and Freshrelease ticket key)
       shell: bash
+      id: fr_key
       run: |
         key=$(sed 's/.*API-\([0-9]\{3,\}\).*/\1/' <<< "${{ steps.pull_request_data.outputs.title }}")
         echo $key
-        echo "::set-env name=FRESHRELEASE_TICKET_KEY::$key"
+        echo "::set-output name=FRESHRELEASE_TICKET_KEY::$key"
         
     - name: get-freshrelease-ticket-id
       # to fetch the freshrelease ticket details (id)
       uses: satak/webrequest-action@master
       id: freshrelease-ticket
       with:
-        url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
+        url: https://freshworks.freshrelease.com/API/issues/API-${{ steps.fr_key.outputs.FRESHRELEASE_TICKET_KEY }}
         method: GET
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
 
     - name: extract Freshrelase ticket ID 
       shell: pwsh
+      id: fr_ticket_id
       run: |
         $output = '${{ steps.freshrelease-ticket.outputs.output }}' | ConvertFrom-Json
         $id = $output.data.issue.id
-        echo "::set-env name=FRESHRELEASE_TICKET_ID::$id"
+        echo "::set-output name=FRESHRELEASE_TICKET_ID::$id"
         
     - name: Add comment in Freshrelease that the PR is merged into master
       uses: satak/webrequest-action@master
       id: freshrelease
       with:
-        url: https://freshworks.freshrelease.com/API/issues/${{ env.FRESHRELEASE_TICKET_ID }}/comments
+        url: https://freshworks.freshrelease.com/API/issues/${{ steps.fr_ticket_id.outputs.FRESHRELEASE_TICKET_ID }}/comments
         method: POST
         payload: '{ "content": "The Pull Request is merged into master" }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
@@ -57,7 +55,7 @@ jobs:
       id: status_updater
       uses: satak/webrequest-action@master
       with:
-        url: https://freshworks.freshrelease.com/API/issues/API-${{ env.FRESHRELEASE_TICKET_KEY }}
+        url: https://freshworks.freshrelease.com/API/issues/API-${{ steps.fr_key.outputs.FRESHRELEASE_TICKET_KEY }}
         method: PUT
         payload: '{ "status_id": 20 }'
         headers: '{"authorization": "Token token=${{ secrets.FRESHRELEASE_TOKEN }}", "Content-Type": "application/json", "Accept": "application/json"}'
